@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Admin — iPad Queen</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body{ background:var(--blush); color:var(--ink-soft); }
+  h1,h2,h3,h4{ color:var(--plum); }
+  .admin-shell{ display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+  @media (max-width:860px){ .admin-shell{ grid-template-columns:1fr; } }
+  .admin-side{ background:var(--plum); color:#e3c9d1; padding:28px 20px; }
+  .admin-side .brand{ color:#fff; margin-bottom:30px; }
+  .admin-side nav a{ display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; font-size:14px; font-weight:600; margin-bottom:6px; color:#e3c9d1; transition:background .2s; }
+  .admin-side nav a.active, .admin-side nav a:hover{ background:rgba(255,255,255,.08); color:#fff; }
+  .admin-main{ padding:34px; }
+  .admin-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; flex-wrap:wrap; gap:12px; }
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:30px; }
+  @media (max-width:860px){ .kpi-grid{ grid-template-columns:repeat(2,1fr); } }
+  .kpi-card{ background:#fff; border-radius:16px; padding:20px; box-shadow:0 12px 30px -20px rgba(176,107,90,.35); }
+  .kpi-card b{ font-size:26px; display:block; font-family:'Poppins',sans-serif; }
+  .kpi-card span{ font-size:12.5px; color:var(--ink-soft); }
+  .admin-card{ background:#fff; border-radius:18px; padding:24px; box-shadow:0 12px 30px -20px rgba(176,107,90,.35); margin-bottom:26px; }
+  .admin-card h3{ font-size:17px; margin-bottom:16px; }
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th{ text-align:left; padding:10px 8px; color:var(--ink-soft); font-weight:600; border-bottom:1px solid rgba(176,107,90,.15); }
+  td{ padding:10px 8px; border-bottom:1px solid rgba(176,107,90,.08); vertical-align:middle; }
+  .row-actions{ display:flex; gap:8px; }
+  .icon-btn{ width:32px; height:32px; border-radius:10px; background:var(--blush); display:flex; align-items:center; justify-content:center; }
+  .icon-btn svg{ width:15px; height:15px; color:var(--rose-gold-2); }
+  .icon-btn.danger{ background:#fdeaea; }
+  .icon-btn.danger svg{ color:#c94b4b; }
+  .login-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .login-card{ background:#fff; border-radius:24px; padding:44px; width:100%; max-width:380px; box-shadow:var(--shadow-soft); text-align:center; }
+  .login-card img{ width:70px; margin:0 auto 16px; border-radius:50%; }
+  .login-card input{ width:100%; padding:13px 16px; border-radius:12px; border:1px solid rgba(176,107,90,.25); margin:10px 0 18px; font-size:14px; }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
+  .form-grid label{ font-size:12.5px; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px; }
+  .form-grid input, .form-grid select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(176,107,90,.25); font-size:13.5px; }
+  .image-editor{ margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid rgba(176,107,90,.15); }
+  .image-editor-header{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .image-editor-count{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .image-editor-url-row{ display:flex; gap:8px; margin-bottom:14px; }
+  .image-editor-url-row input{ flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(176,107,90,.25); font-size:13px; }
+  .image-editor-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:10px; margin-bottom:4px; }
+  .image-editor-thumb{
+    position:relative; aspect-ratio:1/1; border-radius:12px; overflow:hidden; background:var(--blush);
+    border:2px dashed rgba(176,107,90,.3); display:flex; align-items:center; justify-content:center;
+  }
+  .image-editor-thumb img{ width:100%; height:100%; object-fit:contain; background:#fff; }
+  .image-editor-thumb .remove-thumb{
+    position:absolute; top:4px; right:4px; width:22px; height:22px; border-radius:50%;
+    background:rgba(0,0,0,.55); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px;
+  }
+  .image-editor-thumb .cover-tag{ position:absolute; bottom:4px; left:4px; background:var(--rose-gold-2); color:#fff; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:100px; }
+  .image-editor-hint{ font-size:11.5px; color:var(--ink-soft); margin-top:10px; }
+  .modal-bg{ position:fixed; inset:0; background:rgba(42,20,32,.45); display:none; align-items:center; justify-content:center; z-index:400; padding:20px; }
+  .modal-bg.open{ display:flex; }
+  .modal{ background:#fff; border-radius:20px; padding:28px; width:100%; max-width:560px; max-height:88vh; overflow:auto; }
+  .modal h3{ margin-bottom:18px; }
+  .tag-pill{ padding:4px 10px; border-radius:100px; font-size:11.5px; font-weight:700; background:var(--blush); color:var(--rose-gold-2); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN VIEW -->
+<div class="login-wrap" id="login-view">
+  <div class="login-card">
+    <img src="assets/logo.jpg" alt="iPad Queen">
+    <h2 style="margin-bottom:6px;">Espace Admin</h2>
+    <p style="color:var(--ink-soft);font-size:13.5px;margin-bottom:20px;">Réservé à l'équipe iPad Queen</p>
+    <form id="login-form" onsubmit="return false;">
+      <input type="email" id="admin-email" placeholder="Email administrateur" required>
+      <input type="password" id="admin-pass" placeholder="Mot de passe" required>
+      <button type="button" class="btn btn-primary btn-block" id="login-btn">Se connecter</button>
+    </form>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="admin-shell" id="dashboard-view" style="display:none;">
+  <aside class="admin-side">
+    <a href="index.html" class="brand"><img src="assets/logo.jpg" alt="" style="width:36px;height:36px;border-radius:50%;"> iPad Queen</a>
+    <nav>
+      <a href="#" class="active" data-tab="dashboard">📊 Tableau de bord</a>
+      <a href="#" data-tab="products">📦 Produits</a>
+      <a href="#" data-tab="orders">🛍️ Commandes</a>
+      <a href="#" data-tab="shipping">🚚 Livraison</a>
+      <a href="#" id="logout-btn">🚪 Se déconnecter</a>
+    </nav>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <h2>Tableau de bord</h2>
+      <button class="btn btn-primary btn-sm" id="add-product-btn">+ Ajouter un produit</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><b id="kpi-total">0</b><span>Produits au catalogue</span></div>
+      <div class="kpi-card"><b id="kpi-stock">0</b><span>En stock</span></div>
+      <div class="kpi-card"><b id="kpi-featured">0</b><span>Mis en avant</span></div>
+      <div class="kpi-card"><b id="kpi-orders">0</b><span>Commandes reçues</span></div>
+    </div>
+
+    <div class="admin-card" data-panel="products">
+      <h3>Produits</h3>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Photo</th><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Statut</th><th></th></tr></thead>
+          <tbody id="admin-products-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="admin-card" data-panel="orders">
+      <h3>Commandes</h3>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Client</th><th>Produit</th><th>Wilaya</th><th>Prix</th><th>Statut</th><th>Date</th><th></th></tr></thead>
+          <tbody id="admin-orders-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="admin-card" data-panel="shipping">
+      <div class="admin-topbar" style="margin-bottom:16px;">
+        <h3 style="margin:0;">Tarifs de livraison par wilaya</h3>
+        <button class="btn btn-primary btn-sm" id="save-shipping-btn">Enregistrer les tarifs</button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">Laissez à 0 les wilayas non livrées pour le moment. Ces tarifs s'affichent automatiquement dans le formulaire de commande du site.</p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Wilaya</th><th>Stop Desk (DA)</th><th>À domicile (DA)</th></tr></thead>
+          <tbody id="admin-shipping-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-bg" id="product-modal">
+  <div class="modal">
+    <h3 id="modal-title">Ajouter un produit</h3>
+    <form id="product-form">
+      <input type="hidden" id="f-id">
+      <div class="image-editor">
+        <div class="image-editor-header">
+          <label class="btn btn-ghost btn-sm" for="f-image-file" style="cursor:pointer;">📷 Téléverser des photos</label>
+          <input type="file" id="f-image-file" accept="image/*" multiple style="display:none;">
+          <span class="image-editor-count" id="f-image-count">0 / 7 photos</span>
+        </div>
+        <div class="image-editor-url-row">
+          <input type="text" id="f-image-url" placeholder="Ou collez un lien direct vers une image — ex: assets/products/ipad-pro-1.jpg">
+          <button type="button" class="btn btn-ghost btn-sm" id="f-image-url-add">Ajouter le lien</button>
+        </div>
+        <div class="image-editor-grid" id="f-images-grid"></div>
+        <p class="image-editor-hint">Jusqu'à 7 photos par produit. Chaque photo téléversée est automatiquement convertie en <b>.webp</b>.</p>
+      </div>
+      <div class="form-grid">
+        <div><label>Nom</label><input id="f-name" required></div>
+        <div><label>Catégorie</label>
+          <select id="f-category">
+            <option value="pro">iPad Pro</option>
+            <option value="air">iPad Air</option>
+            <option value="mini">iPad Mini</option>
+            <option value="classic">iPad Classique</option>
+            <option value="accessories">Accessoires</option>
+          </select>
+        </div>
+        <div><label>Génération</label><input id="f-gen"></div>
+        <div><label>Stockage</label><input id="f-storage"></div>
+        <div><label>Couleur</label><input id="f-color"></div>
+        <div><label>État</label><input id="f-condition" placeholder="Neuf / Comme neuf / Occasion vérifiée"></div>
+        <div><label>Prix (DZD)</label><input id="f-price" type="number" required></div>
+        <div><label>Ancien prix (optionnel)</label><input id="f-oldprice" type="number"></div>
+        <div><label>Stock</label><input id="f-stock" type="number" required></div>
+        <div><label>Puce</label><input id="f-chip"></div>
+        <div><label>Batterie</label><input id="f-battery"></div>
+        <div><label>Écran</label><input id="f-display"></div>
+        <div><label>Appareil photo</label><input id="f-camera"></div>
+        <div><label>Accessoires inclus</label><input id="f-accessories"></div>
+        <div><label>Badge (optionnel)</label><input id="f-badge" placeholder="Promo / Best-seller / Populaire"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:22px;"><input type="checkbox" id="f-featured" style="width:auto;"><label style="margin:0;">Mettre en vedette</label></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:22px;">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="button" class="btn btn-ghost" id="cancel-modal">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>

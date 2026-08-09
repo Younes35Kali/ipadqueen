@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produit — iPad Queen</title>
+<meta name="description" content="Fiche produit détaillée iPad Queen : spécifications, état, garantie et commande directe sur WhatsApp.">
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="loader">
+  <svg class="loader-crown" viewBox="0 0 24 24" fill="none" stroke="#b06b5a" stroke-width="1.5"><path d="M3 8l4 3 5-6 5 6 4-3-2 10H5L3 8z"/></svg>
+  <p>iPad Queen</p>
+</div>
+
+<header class="navbar">
+  <div class="container nav-inner-v2">
+    <div class="nav-icons-side">
+      <button class="icon-nav-btn" id="search-toggle-btn" aria-label="Rechercher"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+    </div>
+    <a href="index.html" class="brand-center font-cursive">👑<span>&nbsp;iPad Queen&nbsp;</span>✨</a>
+    <div class="nav-icons-side nav-icons-right">
+      <a href="index.html" aria-label="Accueil"><img class="brand-avatar" src="assets/logo.jpg" alt="iPad Queen"></a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html#accueil">Accueil</a>
+      <a href="products.html">Boutique</a>
+      <a href="index.html#categories">Catégories</a>
+      <a href="index.html#avis">Avis clients</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="index.html#contact">Contact</a>
+      <a class="btn btn-whatsapp btn-sm" target="_blank" rel="noopener" href="https://wa.me/213551583284?text=Bonjour%20%F0%9F%91%8B%2C%20je%20souhaite%20des%20informations.">WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="section" style="padding-top:150px;">
+    <div class="container" id="product-detail"></div>
+    <div class="container related-wrap">
+      <h3>Vous aimerez aussi</h3>
+      <div class="grid-products" id="related-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer id="footer-include"></footer>
+<a class="float-wa" target="_blank" rel="noopener" href="https://wa.me/213551583284?text=Bonjour%20%F0%9F%91%8B%2C%20je%20souhaite%20des%20informations." aria-label="Contacter sur WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.79.47 3.47 1.29 4.94L2 22l5.29-1.39a9.9 9.9 0 004.75 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.03c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.12-4.9-4.31-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.36.76-.36h.55c.18 0 .41-.03.64.49.24.56.81 1.94.88 2.08.07.14.11.3.02.49-.09.19-.14.31-.28.47-.14.16-.29.36-.42.49-.14.14-.28.29-.12.56.16.28.71 1.17 1.53 1.89 1.05.93 1.94 1.22 2.21 1.36.28.14.44.12.6-.07.16-.19.68-.79.86-1.07.18-.28.35-.23.6-.14.24.09 1.55.73 1.82.87.26.14.44.2.5.31.07.11.07.65-.17 1.33z"/></svg></a>
+
+<script src="js/footer.js"></script>
+<div id="order-modal-include"></div>
+
+<!-- Remplacer les anciens scripts par ceux-ci avec type="module" -->
+<script type="module" src="js/main.js"></script>
+<script type="module" src="js/order.js"></script>
+</body>
+</html>
