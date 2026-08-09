@@ -1,14 +1,15 @@
 /* ============================================================
    iPad Queen — On-site ordering (Version Module / Supabase)
    ============================================================ */
-import { DB, WILAYAS, formatDZD, waLink } from './data.js';
+import { DB, formatDZD, waLink } from './data.js';
 
 let _orderProduct = null;
 let _shippingRates = {}; // Cache pour les tarifs de livraison
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // On télécharge les tarifs de livraison une seule fois au chargement
+  // Chargement dynamique des tarifs et wilayas depuis Supabase
   _shippingRates = await DB.getShippingRates();
+  const wilayasList = Object.keys(_shippingRates);
 
   const mount = document.getElementById('order-modal-include');
   if(!mount) return;
@@ -47,8 +48,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     </div>
   </div>`;
 
+  // Remplissage dynamique de la liste des wilayas depuis Supabase
   const wilayaSelect = document.getElementById('o-wilaya');
-  wilayaSelect.innerHTML = WILAYAS.map(w => `<option value="${w}">${w}</option>`).join('');
+  if (wilayaSelect) {
+    wilayaSelect.innerHTML = wilayasList.map(w => `<option value="${w}">${w}</option>`).join('');
+  }
 
   const modeSelect = document.getElementById('o-delivery-mode');
   const qtyInput = document.getElementById('o-qty');
@@ -56,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const submitBtn = document.getElementById('btn-submit-order');
 
   function currentShippingFee(){
+    if (!wilayaSelect || !wilayaSelect.value) return 0;
     const r = _shippingRates[wilayaSelect.value];
     if(!r) return 0;
     return modeSelect.value === 'stopdesk' ? (r.rate_desk || 0) : (r.rate_home || 0);
@@ -85,29 +90,28 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="order-total-row order-total-final"><span>Total</span><b>${formatDZD(subtotal + shippingFee)}</b></div>`;
   }
   
-  [wilayaSelect, modeSelect, qtyInput].forEach(el => el.addEventListener('change', refreshTotal));
-  qtyInput.addEventListener('input', refreshTotal);
+  [wilayaSelect, modeSelect, qtyInput].forEach(el => el && el.addEventListener('change', refreshTotal));
+  if (qtyInput) qtyInput.addEventListener('input', refreshTotal);
 
   const modal = document.getElementById('order-modal');
   const form = document.getElementById('order-form');
   const successBox = document.getElementById('order-success');
 
-  function closeModal(){ modal.classList.remove('open'); }
-  document.getElementById('order-modal-close').addEventListener('click', closeModal);
-  document.getElementById('order-success-close').addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+  function closeModal(){ if(modal) modal.classList.remove('open'); }
+  document.getElementById('order-modal-close')?.addEventListener('click', closeModal);
+  document.getElementById('order-success-close')?.addEventListener('click', closeModal);
+  if (modal) modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
 
-  form.addEventListener('submit', async (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if(!_orderProduct) return;
     
     submitBtn.textContent = "Vérification du stock...";
     submitBtn.disabled = true;
 
-    // 1. Re-vérification en direct du stock disponible sur Supabase
+    // Re-vérification en direct du stock disponible sur Supabase
     const liveProduct = await DB.getProduct(_orderProduct.id);
     const availableStock = liveProduct ? (liveProduct.stock || 0) : 0;
-    
     const qty = Math.max(1, parseInt(document.getElementById('o-qty').value, 10) || 1);
 
     if (availableStock <= 0) {
@@ -132,14 +136,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const shippingFee = currentShippingFee();
     const subtotal = _orderProduct.price * qty;
     
-    // 2. Enregistrement de la commande avec productId inclus
+    // Enregistrement de la commande
     const ok = await DB.logOrder({
       customer_name: document.getElementById('o-name').value.trim(),
       customer_phone: document.getElementById('o-phone').value.trim(),
       wilaya: document.getElementById('o-wilaya').value,
       address: document.getElementById('o-address').value.trim(),
       items: [{
-        productId: _orderProduct.id, // Requis pour décrémenter le stock lors de la confirmation
+        productId: _orderProduct.id,
         productName: _orderProduct.name,
         quantity: qty,
         priceAtPurchase: _orderProduct.price
@@ -162,9 +166,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Fonction globale attachée à "window" pour être appelable depuis n'importe quel module
+  // Fonction globale attachée à "window"
   window.openOrderModal = async function(productId){
-    // Récupération asynchrone du produit depuis Supabase
     const p = await DB.getProduct(productId);
     
     if(!p) {
@@ -172,7 +175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // Restriction : Ne pas ouvrir la modale si le produit est en rupture de stock
     if ((p.stock || 0) <= 0) {
       alert("Ce produit est actuellement en rupture de stock.");
       return;
@@ -181,11 +183,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     _orderProduct = p;
     form.reset();
 
-    // Limitation du champ quantité au stock disponible
     const oQty = document.getElementById('o-qty');
-    oQty.value = 1;
-    oQty.min = 1;
-    oQty.max = p.stock;
+    if (oQty) {
+      oQty.value = 1;
+      oQty.min = 1;
+      oQty.max = p.stock;
+    }
 
     form.style.display = 'block';
     document.getElementById('order-modal-product').style.display = 'flex';
